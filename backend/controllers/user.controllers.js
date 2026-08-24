@@ -1,4 +1,4 @@
-import User from "./user.model.js";
+import User from "../models/user.model.js";
 export const registerUser =  async(req,res)=>{
     // 
     const {username,name,email, password } = req.body
@@ -12,7 +12,7 @@ export const registerUser =  async(req,res)=>{
 
            // if username exists
 
-        const userNameExists = await User.findOne({userName})
+        const userNameExists = await User.findOne({username})
 
         if(userNameExists){
             return res.status(400).json({message : 'username already exists'})
@@ -24,16 +24,16 @@ export const registerUser =  async(req,res)=>{
             return res.status(400).json({message : 'email already exists'})
         }
 
-        if(password.length<=6){
+        if(password.length<6){
             return res.status(400).json({message : 'Password length should be greater than or equal to 6'})
         }
 
-        const newUser = User.create({userName,name,password,email})
+        const newUser = await User.create({username,name,password,email})
 
-        res.send(newUser)
+        res.status(201).json({newUser})
     }
     catch{
-
+        res.status(500).json({message : "Internal Server Error"})
 
     }
 
